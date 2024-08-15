@@ -2,6 +2,26 @@
 import DrinkMenu from './components/DrinkMenu.vue';
 import CartList from './components/CartList.vue';
 import OrderList from './components/OrderList.vue';
+import { ref, watch } from 'vue';
+import type { ICartItem } from './types';
+
+const cartData = ref<ICartItem[]>([]);
+
+const addItem = (item: ICartItem) => {
+  const id = item.id;
+
+  if (cartData.value.some((item) => item.id === id)) {
+    alert('已加入購物車');
+    return;
+  }
+
+  const newItem = { ...item, quantity: 1 };
+  cartData.value.push(newItem);
+};
+
+watch(cartData, () => {
+  console.log(cartData.value);
+});
 </script>
 
 <template>
@@ -11,8 +31,8 @@ import OrderList from './components/OrderList.vue';
     </header>
     <div class="container mt-4">
       <div class="row">
-        <DrinkMenu />
-        <CartList />
+        <DrinkMenu :cartData="cartData" @add-item="addItem" />
+        <CartList :cartData="cartData" />
       </div>
       <hr />
       <div class="row">

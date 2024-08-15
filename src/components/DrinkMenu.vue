@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import type { IMenuItem } from '@/types';
 import { onMounted, ref } from 'vue';
+import type { ICartItem, IMenuItem } from '@/types';
+
+const emit = defineEmits(['add-item']);
 
 const menu = ref<IMenuItem[]>([]);
 
@@ -17,6 +19,7 @@ onMounted(async () => {
       <li v-for="item in menu" :key="item.id" class="menu-item list-group-item px-2">
         <button
           type="button"
+          @click="$emit('add-item', item)"
           class="btn-menu d-flex justify-content-between align-items-center p-0 w-100 border-0 bg-transparent"
         >
           <div class="text-start">
