@@ -7,4 +7,5 @@ export interface IMenuItem {
 
 export interface ICartItem extends IMenuItem {
   quantity: number;
+  subTotal: number;
 }

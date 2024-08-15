@@ -2,25 +2,32 @@
 import DrinkMenu from './components/DrinkMenu.vue';
 import CartList from './components/CartList.vue';
 import OrderList from './components/OrderList.vue';
-import { ref, watch } from 'vue';
-import type { ICartItem } from './types';
+import { onMounted, ref } from 'vue';
+import type { ICartItem, IMenuItem } from './types';
 
-const cartData = ref<ICartItem[]>([]);
+const menu = ref<IMenuItem[]>([]);
+const cart = ref<ICartItem[]>([]);
 
-const addItem = (item: ICartItem) => {
-  const id = item.id;
-
-  if (cartData.value.some((item) => item.id === id)) {
+const addItem = (id: number) => {
+  if (cart.value.some((item) => item.id === id)) {
     alert('已加入購物車');
     return;
   }
 
-  const newItem = { ...item, quantity: 1 };
-  cartData.value.push(newItem);
+  const targetItem: IMenuItem = menu.value.find((item) => item.id === id)!;
+  const newItem: ICartItem = { ...targetItem, quantity: 1, subTotal: targetItem.price };
+  cart.value.push(newItem);
 };
 
-watch(cartData, () => {
-  console.log(cartData.value);
+const removeItem = (id: number) => {
+  cart.value = cart.value.filter((item) => item.id !== id);
+};
+
+// 載入菜單
+onMounted(async () => {
+  const response = await fetch('/src/constants/menu.json');
+  const data = await response.json();
+  menu.value = data;
 });
 </script>
 
@@ -31,8 +38,8 @@ watch(cartData, () => {
     </header>
     <div class="container mt-4">
       <div class="row">
-        <DrinkMenu :cartData="cartData" @add-item="addItem" />
-        <CartList :cartData="cartData" />
+        <DrinkMenu :menu="menu" :cart="cart" @add-item="addItem" />
+        <CartList :cart="cart" @remove-item="removeItem" />
       </div>
       <hr />
       <div class="row">
