@@ -23,6 +23,14 @@ const removeItem = (id: number) => {
   cart.value = cart.value.filter((item) => item.id !== id);
 };
 
+const updateQuantity = (id: number, quantity: number) => {
+  const targetItem: ICartItem = cart.value.find((item) => item.id === id)!;
+  targetItem.quantity = quantity;
+  targetItem.subTotal = targetItem.price * quantity;
+
+  console.log(cart.value);
+};
+
 // 載入菜單
 onMounted(async () => {
   const response = await fetch('/src/constants/menu.json');
@@ -39,7 +47,7 @@ onMounted(async () => {
     <div class="container mt-4">
       <div class="row">
         <DrinkMenu :menu="menu" :cart="cart" @add-item="addItem" />
-        <CartList :cart="cart" @remove-item="removeItem" />
+        <CartList :cart="cart" @remove-item="removeItem" @update-quantity="updateQuantity" />
       </div>
       <hr />
       <div class="row">

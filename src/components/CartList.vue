@@ -2,27 +2,31 @@
 import { computed, ref } from 'vue';
 import type { ICartItem } from '@/types';
 
+const MAX_QUANTITY = 10;
+
 const props = defineProps<{
   cart: ICartItem[];
 }>();
-const emit = defineEmits(['remove-item']);
 
-// 將 cart 加入小計
-const computedcart = computed(() => {
-  const data = props.cart.map((item) => ({
-    ...item,
-    subTotal: item.price * item.quantity
-  }));
-  return data;
-});
+const emit = defineEmits<{
+  (e: 'remove-item', id: number): void;
+  (e: 'update-quantity', id: number, quantity: number): void;
+}>();
 
 const totalPrice = computed(() => {
-  const total = computedcart.value.reduce((total, item) => total + item.subTotal, 0);
+  const total = props.cart.reduce((total, item) => total + item.subTotal, 0);
   return total;
 });
 
 const emitRemoveItem = (id: number) => {
   emit('remove-item', id);
+};
+
+const emitUpdateQuantity = ($event: Event, id: number) => {
+  const $select = $event.target as HTMLSelectElement;
+  const quantity = parseInt($select.value);
+
+  emit('update-quantity', id, quantity);
 };
 </script>
 
@@ -34,18 +38,26 @@ const emitRemoveItem = (id: number) => {
           <th scope="col">#</th>
           <th scope="col">品項</th>
           <th scope="col">描述</th>
-          <th scope="col">數量</th>
+          <th scope="col" width="80">數量</th>
           <th scope="col">單價</th>
           <th scope="col">小計</th>
           <th scope="col">刪除</th>
         </tr>
       </thead>
-      <tbody v-if="computedcart.length">
-        <tr v-for="(item, index) in computedcart" :key="item.id">
+      <tbody v-if="props.cart.length">
+        <tr v-for="(item, index) in props.cart" :key="item.id">
           <th scope="row">{{ index + 1 }}</th>
           <td>{{ item.name }}</td>
           <td>{{ item.description }}</td>
-          <td>{{ item.quantity }}</td>
+          <td>
+            <select
+              :value="item.quantity"
+              @change="emitUpdateQuantity($event, item.id)"
+              class="form-select form-select-sm"
+            >
+              <option v-for="i in MAX_QUANTITY" :key="i" :value="i">{{ i }}</option>
+            </select>
+          </td>
           <td>${{ item.price }}</td>
           <td>${{ item.subTotal }}</td>
           <td>
