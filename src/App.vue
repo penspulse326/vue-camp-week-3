@@ -1,5 +1,15 @@
 <script setup lang="ts"></script>
 
-<template>123</template>
+<template>
+  <main>
+    <p>123</p>
+  </main>
+</template>
 
-<style scoped></style>
+<style scoped lang="scss">
+main {
+  p {
+    color: red;
+  }
+}
+</style>
