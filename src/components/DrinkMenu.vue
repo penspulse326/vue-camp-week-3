@@ -1,22 +1,27 @@
 <script setup lang="ts">
-import type { IMenuItem } from '@/types';
-import { onMounted, ref } from 'vue';
+import type { ICartItem, IMenuItem } from '@/types';
 
-const menu = ref<IMenuItem[]>([]);
+const props = defineProps<{
+  menu: IMenuItem[];
+  cart: ICartItem[];
+}>();
 
-onMounted(async () => {
-  const response = await fetch('/src/constants/menu.json');
-  const data = await response.json();
-  menu.value = data;
-});
+const emit = defineEmits<{
+  (e: 'add-item', id: number): void;
+}>();
+
+const emitAddItem = (id: number) => {
+  emit('add-item', id);
+};
 </script>
 
 <template>
   <aside class="col-md-3">
     <ul class="list-group">
-      <li v-for="item in menu" :key="item.id" class="menu-item list-group-item px-2">
+      <li v-for="item in props.menu" :key="item.id" class="menu-item list-group-item px-2">
         <button
           type="button"
+          @click="emitAddItem(item.id)"
           class="btn-menu d-flex justify-content-between align-items-center p-0 w-100 border-0 bg-transparent"
         >
           <div class="text-start">
