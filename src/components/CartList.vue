@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import type { ICartItem } from '@/types';
 
 const MAX_QUANTITY = 10;
@@ -11,6 +11,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'remove-item', id: number): void;
   (e: 'update-quantity', id: number, quantity: number): void;
+  (e: 'create-order'): void;
 }>();
 
 const totalPrice = computed(() => {
@@ -27,6 +28,10 @@ const emitUpdateQuantity = ($event: Event, id: number) => {
   const quantity = parseInt($select.value);
 
   emit('update-quantity', id, quantity);
+};
+
+const emitCreateOrder = () => {
+  emit('create-order');
 };
 </script>
 
@@ -84,7 +89,7 @@ const emitUpdateQuantity = ($event: Event, id: number) => {
       <label for="floatingTextarea2">備註</label>
     </div>
     <div class="text-end">
-      <button type="button" class="btn btn-primary mt-2">送出訂單</button>
+      <button type="button" @click="emitCreateOrder" class="btn btn-primary mt-2">送出訂單</button>
     </div>
   </div>
 </template>

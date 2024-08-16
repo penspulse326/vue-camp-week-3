@@ -9,3 +9,10 @@ export interface ICartItem extends IMenuItem {
   quantity: number;
   subTotal: number;
 }
+
+export interface IOrder {
+  id: number;
+  items: ICartItem[];
+  totalPrice: number;
+  timestamp: Date;
+}
