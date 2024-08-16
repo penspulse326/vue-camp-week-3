@@ -56,7 +56,7 @@ const createOrder = () => {
 
 // 載入菜單
 onMounted(async () => {
-  const response = await fetch('/src/constants/menu.json');
+  const response = await fetch('./src/constants/menu.json');
   const data = await response.json();
   menu.value = data;
 });
