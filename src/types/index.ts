@@ -14,5 +14,6 @@ export interface IOrder {
   id: number;
   items: ICartItem[];
   totalPrice: number;
+  comment: string;
   timestamp: Date;
 }

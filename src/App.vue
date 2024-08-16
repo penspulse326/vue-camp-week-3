@@ -8,15 +8,16 @@ import type { ICartItem, IMenuItem, IOrder } from './types';
 const menu = ref<IMenuItem[]>([]);
 const cart = ref<ICartItem[]>([]);
 const orders = ref<IOrder[]>([]);
+const currentComment = ref('');
 
 const addItem = (id: number) => {
   if (cart.value.some((item) => item.id === id)) {
-    alert('已加入購物車');
     return;
   }
 
   const targetItem: IMenuItem = menu.value.find((item) => item.id === id)!;
   const newItem: ICartItem = { ...targetItem, quantity: 1, subTotal: targetItem.price };
+
   cart.value.push(newItem);
 };
 
@@ -30,6 +31,10 @@ const updateQuantity = (id: number, quantity: number) => {
   targetItem.subTotal = targetItem.price * quantity;
 };
 
+const inputComment = (value: string) => {
+  currentComment.value = value;
+};
+
 const createOrder = () => {
   if (cart.value.length === 0) {
     return;
@@ -37,12 +42,16 @@ const createOrder = () => {
 
   const newOrder: IOrder = {
     id: new Date().getTime(),
-    timestamp: new Date(),
     items: cart.value,
-    totalPrice: cart.value.reduce((total, item) => total + item.subTotal, 0)
+    totalPrice: cart.value.reduce((total, item) => total + item.subTotal, 0),
+    comment: currentComment.value,
+    timestamp: new Date()
   };
 
   orders.value.push(newOrder);
+
+  cart.value = [];
+  currentComment.value = '';
 };
 
 // 載入菜單
@@ -56,14 +65,17 @@ onMounted(async () => {
 <template>
   <main class="container py-3">
     <header class="p-2 mt-4 rounded-3 bg-primary text-center">
-      <h1 class="m-0 fs-3 fw-bold">六角點餐機</h1>
+      <h1 class="m-0 fs-3 fw-bold">六角茶飲 POS</h1>
     </header>
+    <h2 class="mt-4 fs-5 text-center">溫馨提醒：這裡沒有漂亮阿姨</h2>
     <div class="row mt-4 gap-4 gap-md-0">
       <DrinkMenu :menu="menu" :cart="cart" @add-item="addItem" />
       <CartList
         :cart="cart"
+        :comment="currentComment"
         @remove-item="removeItem"
         @update-quantity="updateQuantity"
+        @input-comment="inputComment"
         @create-order="createOrder"
       />
       <hr class="my-4" />

@@ -6,11 +6,13 @@ const MAX_QUANTITY = 10;
 
 const props = defineProps<{
   cart: ICartItem[];
+  comment: string;
 }>();
 
 const emit = defineEmits<{
   (e: 'remove-item', id: number): void;
   (e: 'update-quantity', id: number, quantity: number): void;
+  (e: 'input-comment', comment: string): void;
   (e: 'create-order'): void;
 }>();
 
@@ -28,6 +30,13 @@ const emitUpdateQuantity = ($event: Event, id: number) => {
   const quantity = parseInt($select.value);
 
   emit('update-quantity', id, quantity);
+};
+
+const emitInputComment = ($event: Event) => {
+  const $textarea = $event.target as HTMLTextAreaElement;
+  const value = $textarea.value;
+
+  emit('input-comment', value);
 };
 
 const emitCreateOrder = () => {
@@ -81,12 +90,14 @@ const emitCreateOrder = () => {
     <h4 class="text-end">總計: ${{ totalPrice }}</h4>
     <div class="form-floating mt-4">
       <textarea
+        :value="props.comment"
+        @input="emitInputComment($event)"
         class="form-control"
         placeholder="Leave a comment here"
-        id="floatingTextarea2"
+        id="order-comment"
         style="height: 100px"
       ></textarea>
-      <label for="floatingTextarea2">備註</label>
+      <label for="order-comment">備註</label>
     </div>
     <div class="text-end">
       <button type="button" @click="emitCreateOrder" class="btn btn-primary mt-2">送出訂單</button>
