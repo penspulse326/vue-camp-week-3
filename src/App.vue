@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import menuData from './constants/menu.json';
+
 import DrinkMenu from './components/DrinkMenu.vue';
 import CartList from './components/CartList.vue';
 import OrderList from './components/OrderList.vue';
-import { onMounted, ref } from 'vue';
+
 import type { ICartItem, IMenuItem, IOrder } from './types';
 
 const menu = ref<IMenuItem[]>([]);
@@ -56,9 +59,9 @@ const createOrder = () => {
 
 // 載入菜單
 onMounted(async () => {
-  const response = await fetch('./src/constants/menu.json');
-  const data = await response.json();
-  menu.value = data;
+  if (menuData) {
+    menu.value = menuData;
+  }
 });
 </script>
 
